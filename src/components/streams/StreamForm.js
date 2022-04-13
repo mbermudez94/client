@@ -1,5 +1,5 @@
 import React from "react";
-import { Field, reduxForm } from "redux-form";
+import { Field, Form } from 'react-final-form';
 
 class StreamForm extends React.Component {
   renderError({touched, error}){
@@ -30,31 +30,36 @@ class StreamForm extends React.Component {
 
   render() {
     return (
-      <form
-        onSubmit={this.props.handleSubmit(this.onSubmit)}
-        className="ui form error"
-      >
-        <Field name="title" label="Enter Title" component={this.renderInput} />
-        <Field
-          name="description"
-          label="Enter Description"
-          component={this.renderInput}
-        />
-        <button className="ui button primary">Submit</button>
-      </form>
-    );
-  }
+      <Form
+      initialValues={this.props.initialValues}
+      onSubmit={this.onSubmit}
+      validate={(formValues) => {
+        const errors = {};
+ 
+        if (!formValues.title) {
+          errors.title = "You must enter a title";
+        }
+ 
+        if (!formValues.description) {
+          errors.description = "You must enter a description";
+        }
+ 
+        return errors;
+      }}
+      render={({ handleSubmit }) => (
+        <form onSubmit={handleSubmit} className="ui form error">
+          <Field name="title" component={this.renderInput} label="Enter Title" />
+          <Field
+            name="description"
+            component={this.renderInput}
+            label="Enter Description"
+          />
+          <button className="ui button primary">Submit</button>
+        </form>
+    )}
+    />
+  );
+};
 }
 
-const validate = (formValues) => {
-  const errors = {};
-  if (!formValues.title) {
-    errors.title = "You must enter a title to create a Stream.";
-  }
-  if (!formValues.description) {
-    errors.description = "You must enter a description to create a Stream.";
-  }
-  return errors;
-};
-
-export default reduxForm({form: "streamForm", validate})(StreamForm)
+export default StreamForm;
